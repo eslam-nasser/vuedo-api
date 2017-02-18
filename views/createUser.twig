@@ -1,0 +1,11 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+  <form action="/users/register" method="POST">
+    <input type="text" name="name" placeholder="Name">
+    <input type="text" name="password" placeholder="password">
+    <input type="text" name="email" placeholder="email">
+
+    <input type="submit" value="submit">
+  </form>
+{% endblock %}
