@@ -5,7 +5,9 @@ var crypto          = require('crypto')
 var path            = require('path');
 var passwordHash    = require('password-hash');
 var User            = require('../models/User')
-
+var jwt             = require('jsonwebtoken'); // used to create, sign, and verify tokens
+var config          = require('../config'); // get our config file
+var superSecret     = config.secret
 
 // var storage = multer.diskStorage({
 //   destination: './public/uploads/admins/',
@@ -36,18 +38,32 @@ router.post('/register', function(req, res, next) {
     var newHashedPassword = passwordHash.generate(req.body.password)
     // create a user
     var newUser = new User({
-        name: req.body.name,
+        fullname: req.body.fullname,
+        username: req.body.username,
         password: newHashedPassword,
         email: req.body.email,
-        // avatarUrl: req.file,
-        // role: req.body.role,
+        boards: {
+            todo: [],
+            doing: [],
+            done: [],
+            later: [],
+            other: [],
+        },
         createdAt: new Date()
     });
     // save the user
     newUser.save(function(err) {
         if (err) throw err;
-        console.log('User saved successfully');
-        res.redirect('/users/register')
+        console.log('User saved successfully', newUser);
+        // res.redirect('/users/register')
+        var token = jwt.sign(newUser, superSecret, {
+          expiresIn: '24h' // expires in 24 hours
+        });
+        res.json({ 
+            success: true, 
+            message: 'Authentication successful.',
+            token: token,
+            user_id: newUser._id });
     });
 });
 
@@ -56,7 +72,7 @@ router.post('/auth', function(req, res, next) {
     var inputUsername = req.body.username,
         inputPassword = req.body.password;
     User.findOne({
-        name: inputUsername
+        username: inputUsername
     }, function(err, user) {
         if (err) throw err;
         if (!user) {
@@ -64,9 +80,20 @@ router.post('/auth', function(req, res, next) {
         } else if (user) {
             // check if password matches
             if (!passwordHash.verify(inputPassword, user.password)) {
-                res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+                res.json({ 
+                    success: false, 
+                    message: 'Authentication failed. Wrong password.' });
             } else {
-                res.json({ success: true, message: 'Authentication successful.' });
+                // if user is found and password is right
+                // create a token
+                var token = jwt.sign(user, superSecret, {
+                  expiresIn: '24h' // expires in 24 hours
+                });
+                res.json({ 
+                    success: true, 
+                    message: 'Authentication successful.',
+                    token: token,
+                    user_id: user._id });
             }
         }
     });
