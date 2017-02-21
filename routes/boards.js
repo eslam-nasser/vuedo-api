@@ -8,7 +8,7 @@ router.get('/:user_id', function(req, res, next) {
 	var userId = req.params.user_id;
   User.findById(userId)
       .exec(function(err, user){
-      	if(user.boards){
+      	if(user && user.boards){
           res.json(user.boards)
       	}else{
           res.json({'boards': 'empty'})
