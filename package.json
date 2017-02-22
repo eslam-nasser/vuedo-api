@@ -5,7 +5,7 @@
   "main": "./bin/www",
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha"
+    "test": "mocha --timeout 10000"
   },
   "dependencies": {
     "body-parser": "~1.15.2",
@@ -22,5 +22,10 @@
     "request": "^2.79.0",
     "serve-favicon": "~2.3.0",
     "twig": "^0.10.3"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^2.0.1",
+    "mocha": "^2.4.5"
   }
 }

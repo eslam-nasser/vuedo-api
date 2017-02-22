@@ -1,6 +1,5 @@
 var express     = require('express');
 var router      = express.Router();
-var ToDo        = require('../models/Todo');
 var User        = require('../models/User');
 
 /* GET data */
@@ -22,7 +21,7 @@ router.put('/:user_id', function(req, res, next) {
 	console.log(req.body)
   User.findById(userId)
       .exec(function(err, user){
-      	if(user.boards){
+      	if(user && user.boards){
       		user.boards =  req.body
           user.save(function(err) {
             if (err) throw err;

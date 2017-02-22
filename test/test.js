@@ -1,4 +1,5 @@
 // https://www.distelli.com/docs/tutorials/automated-mocha-tests-for-node
+// https://scotch.io/tutorials/test-a-node-restful-api-with-mocha-and-chai
 var request = require("request"),
     assert = require('assert'),
     helloWorld = require("../app.js"),
