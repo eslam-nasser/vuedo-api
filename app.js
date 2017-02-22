@@ -16,6 +16,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'twig');
 
+mongoose.Promise = global.Promise;
 mongoose.connect(config.db); // connect to database
 
 if(config.util.getEnv('NODE_ENV') !== 'test') {

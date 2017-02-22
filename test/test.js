@@ -6,24 +6,27 @@
 //During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
 
-let mongoose = require("mongoose");
-let Users = require('../models/User');
+let mongoose    = require("mongoose");
+let Users       = require('../models/User');
 
-//Require the dev-dependencies
-let chai = require('chai');
-let chaiHttp = require('chai-http');
-let app = require('../app');
-let should = chai.should();
+//Require some stuff we need
+let chai        = require('chai');
+let chaiHttp    = require('chai-http');
+let app         = require('../app');
+let should      = chai.should();
 
 chai.use(chaiHttp);
 //Our parent block
-describe('Users', () => {
-    beforeEach((done) => { //Before each test we empty the database
+describe('Test Users & Boards', () => {
+    
+    // Remove the dust before each test
+    beforeEach((done) => {
         Users.remove({}, (err) => { 
            done();         
         });     
     });
-/*
+ 
+ /*
   * Test the /GET route
   */
   describe('/GET users', () => {
@@ -92,7 +95,7 @@ describe('Users', () => {
   * Test the /GET/:id route
   */
   describe('/GET/:id user boards', () => {
-      it('it should GET this user boards by the given id', (done) => {
+      it('it should GET the boards of this user', (done) => {
         let user = new Users({
             fullname: 'Ezio auditore da firenze', 
             username: 'ezio', 
@@ -132,6 +135,50 @@ describe('Users', () => {
       });
   });
 
+
+   /*
+  * Test the /PUT/:id route
+  */
+  describe('/PUT/:id boards', () => {
+      it('it should UPDATE the boards of this user', (done) => {
+        let user = new Users({
+            fullname: 'Ezio auditore da firenze', 
+            username: 'ezio', 
+            password: '1459', 
+            email: 'owl@assassins.creed',
+            boards: {
+                todo: [],
+                doing: [],
+                done: [],
+                later: [],
+                other: [],
+            },
+            createdAt: new Date()
+        });
+        user.save((err, user) => {
+                chai.request(app)
+                .put('/boards/' + user.id)
+                .send({
+                    todo:  [{id: 1, title: 'This is a test card'}],
+                    doing: [{id: 1, title: 'This is a test card'}],
+                    done:  [{id: 1, title: 'This is a test card'}],
+                    later: [{id: 1, title: 'This is a test card'}],
+                    other: [{id: 1, title: 'This is a test card'}],
+                })
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    // Make sure that the server is naughty :)
+                    res.body.todo[0].should.have.property('title').eql('This is a test card');
+                    res.body.doing[0].should.have.property('title').eql('This is a test card');
+                    res.body.done[0].should.have.property('title').eql('This is a test card');
+                    res.body.later[0].should.have.property('title').eql('This is a test card');
+                    res.body.other[0].should.have.property('title').eql('This is a test card');
+                  done();
+                });
+          });
+      });
+  });
 
 
 });
