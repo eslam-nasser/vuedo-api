@@ -1,25 +1,10 @@
 var express         = require('express');
 var router          = express.Router();
-// var multer          = require('multer')
-var crypto          = require('crypto')
-var path            = require('path');
 var passwordHash    = require('password-hash');
 var User            = require('../models/User')
 var jwt             = require('jsonwebtoken'); // used to create, sign, and verify tokens
-var config          = require('../config'); // get our config file
+var config          = require('config'); // get our config file
 var superSecret     = config.secret
-
-// var storage = multer.diskStorage({
-//   destination: './public/uploads/admins/',
-//   filename: function (req, file, cb) {
-//     crypto.randomBytes(16, function (err, raw) {
-//       if (err) return cb(err)
-//       cb(null, raw.toString('hex') + path.extname(file.originalname))
-//     })
-//   }
-// })
-// var upload = multer({ storage: storage })
-
 
 /* GET home page. */
 router.get('/all', function(req, res, next) {
@@ -27,7 +12,6 @@ router.get('/all', function(req, res, next) {
         res.json(items);
     })
 });
-
 
 /* GET home page. */
 router.get('/register', function(req, res, next) {
@@ -54,16 +38,17 @@ router.post('/register', function(req, res, next) {
     // save the user
     newUser.save(function(err) {
         if (err) throw err;
-        console.log('User saved successfully', newUser);
+        // console.log('\nUser saved successfully\n');
         // res.redirect('/users/register')
         var token = jwt.sign(newUser, superSecret, {
           expiresIn: '24h' // expires in 24 hours
         });
-        res.json({ 
+        res.json({
             success: true, 
             message: 'Authentication successful.',
             token: token,
-            user_id: newUser._id });
+            user_id: newUser._id,
+            newUser: newUser });
     });
 });
 

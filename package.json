@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "body-parser": "~1.15.2",
+    "config": "^1.20.1",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.1",
     "crypto": "0.0.3",
@@ -17,10 +18,8 @@
     "jsonwebtoken": "^7.3.0",
     "mongoose": "^4.8.1",
     "morgan": "~1.7.0",
-    "multer": "^1.3.0",
     "password-hash": "^1.2.2",
     "request": "^2.79.0",
-    "serve-favicon": "~2.3.0",
     "twig": "^0.10.3"
   },
   "devDependencies": {
