@@ -31,6 +31,15 @@ you can make another database just for testing and place it's url in `/config/te
 
 ## Done
 Now the app is running at `http://localhost:3000`, or what ever is the configs you made
+and your routes is:
+| Route                 	| HTTP Verb 	| Description                        	|
+|-----------------------	|-----------	|------------------------------------	|
+| {url}/users/all       	| GET       	| Get all users in database          	|
+| {url}/users/register  	| GET       	| Get a simple form to create a user 	|
+| {url}/users/register  	| POST      	| Create a new user                  	|
+| {url}/auth            	| POST      	| Check credentials                  	|
+| {url}/boards/:user_id 	| GET       	| Get boards for this user's id      	|
+| {url}/boards/:user_id 	| POST      	| Update boards for this user's id   	|
 
 For detailed explanation on how things work, checkout the [Express Docs](https://expressjs.com/en/api.html) and [MongoDB Docs](https://docs.mongodb.com/)
 
