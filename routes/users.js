@@ -20,36 +20,51 @@ router.get('/register', function(req, res, next) {
 
 router.post('/register', function(req, res, next) {
     var newHashedPassword = passwordHash.generate(req.body.password)
-    // create a user
-    var newUser = new User({
-        fullname: req.body.fullname,
-        username: req.body.username,
-        password: newHashedPassword,
-        email: req.body.email,
-        boards: {
-            todo: [],
-            doing: [],
-            done: [],
-            later: [],
-            other: [],
-        },
-        createdAt: new Date()
-    });
-    // save the user
-    newUser.save(function(err) {
+    // Check if there is a user with the same email
+    User.findOne({
+        email: req.body.email
+    }, function(err, user) {
         if (err) throw err;
-        // console.log('\nUser saved successfully\n');
-        // res.redirect('/users/register')
-        var token = jwt.sign(newUser, superSecret, {
-          expiresIn: '24h' // expires in 24 hours
-        });
-        res.json({
-            success: true, 
-            message: 'Authentication successful.',
-            token: token,
-            user_id: newUser._id,
-            newUser: newUser });
+        if (!user) {
+            res.json({ message: 'this is a new email' });
+            // create a user
+            var newUser = new User({
+                fullname: req.body.fullname,
+                username: req.body.username,
+                password: newHashedPassword,
+                email: req.body.email,
+                boards: {
+                    todo: [],
+                    doing: [],
+                    done: [],
+                    later: [],
+                    other: [],
+                },
+                createdAt: new Date()
+            });
+            // save the user
+            newUser.save(function(err) {
+                if (err)
+                    console.log('Re-Send')
+                    return res.send();
+                // console.log('\nUser saved successfully\n');
+                var token = jwt.sign(newUser, superSecret, {
+                  expiresIn: '24h' // expires in 24 hours
+                });
+                res.json({
+                    success: true, 
+                    message: 'Registration successful.',
+                    token: token,
+                    user_id: newUser._id,
+                    newUser: newUser });
+            });
+        } else if (user) {
+            // This email is already stored in db
+            console.log(user)
+            res.json({ message: 'this email is already used!' });
+        }
     });
+    
 });
 
 router.post('/auth', function(req, res, next) {
