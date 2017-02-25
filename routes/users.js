@@ -26,7 +26,6 @@ router.post('/register', function(req, res, next) {
     }, function(err, user) {
         if (err) throw err;
         if (!user) {
-            res.json({ message: 'this is a new email' });
             // create a user
             var newUser = new User({
                 fullname: req.body.fullname,
@@ -43,14 +42,14 @@ router.post('/register', function(req, res, next) {
                 createdAt: new Date()
             });
             // save the user
+
             newUser.save(function(err) {
-                if (err)
-                    console.log('Re-Send')
-                    return res.send();
+                if (err) throw err;
                 // console.log('\nUser saved successfully\n');
                 var token = jwt.sign(newUser, superSecret, {
                   expiresIn: '24h' // expires in 24 hours
                 });
+                // console.log(newUser)
                 res.json({
                     success: true, 
                     message: 'Registration successful.',
@@ -60,7 +59,7 @@ router.post('/register', function(req, res, next) {
             });
         } else if (user) {
             // This email is already stored in db
-            console.log(user)
+            // console.log(user)
             res.json({ message: 'this email is already used!' });
         }
     });
